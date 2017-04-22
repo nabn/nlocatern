@@ -1,18 +1,13 @@
 import React, { Component } from "react"
-import { Dimensions } from "react-native"
-import {
-  View, Text, Button, Card, Heading,
-  Divider, NavigationBar, Icon, DropDownMenu,
-  TextInput, Row, Screen, Tile,
-  Image, Subtitle, Caption, ListView,
-} from "@shoutem/ui"
+import { View, Text, Icon, Row, Screen, ListView } from "@shoutem/ui"
+import Banner from "./Banner"
+import R from 'ramda'
 
-const { width, height } = Dimensions.get("window")
-const OPTIONS = ["Movies", "ATMs", "Petrol Pumps"]
+const OPTIONS = ["Movies", "ATMs", "Petrol Pumps", "Hotels"]
 
 const renderRow = type => (
   <View styleName="md-gutter-vertical" key={type}>
-    <Row styleName="small" style={s.row}>
+    <Row styleName="small">
       <Icon name="right-arrow" />
       <Text>{type}</Text>
     </Row>
@@ -22,36 +17,42 @@ const renderRow = type => (
 const OptionsList = _ =>
   <ListView data={OPTIONS} renderRow={renderRow} />
 
-const Banner = _ => (
-  <View styleName="vertical v-center flexible">
-    <Tile styleName="text-centric">
-      <Heading styleName="lg-gutter-bottom"> nLocate </Heading>
-      <View style={s.grey}
-        styleName="horizontal v-center md-gutter-horizontal rounded-corners" >
-        <Icon name="search" />
-        <TextInput
-          style={s.grey}
-          styleName="rounded-corners sm-gutter flexible"
-          placeholder="Search around your location" />
-      </View>
-    </Tile>
-  </View>
-)
+const log = x =>
+  console.log(x)
+
+const getLatLngString =
+  R.compose(
+    R.join(', '),
+    R.props(['latitude', 'longitude']),
+    R.prop('coords')
+  )
 
 export default class nLocateRN extends Component {
-  render = _ => (
-    <Screen>
-      <Divider />
-      <Banner />
-      <View styleName="flexible">
-        <OptionsList />
-      </View>
-    </Screen>
-  )
-}
 
-const s = {
-  grey: {
-    backgroundColor: "#eee"
+  state = { lagLng: '' }
+
+  componentDidMount () {
+    navigator.geolocation.watchPosition(
+      pos => {
+        this.setState({
+          latLng: getLatLngString(pos)
+        })
+      },
+      console.warn
+    )
+  }
+
+  componentWillUnmount () {
+    navigator.geolocation.clearWatch()
+  }
+
+  render = _ => {
+    const { latLng } = this.state
+    return (
+      <Screen>
+        <Banner location={latLng}/>
+        <OptionsList />
+      </Screen>
+    )
   }
 }
