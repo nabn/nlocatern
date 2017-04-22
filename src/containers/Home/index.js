@@ -3,6 +3,8 @@ import { View, Text, Icon, Row, Screen, ListView } from "@shoutem/ui"
 import Banner from "./Banner"
 import R from 'ramda'
 
+const GEOCODE_URI = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='
+
 const OPTIONS = ["Movies", "ATMs", "Petrol Pumps", "Hotels"]
 
 const renderRow = type => (
@@ -20,26 +22,35 @@ const OptionsList = _ =>
 const log = x =>
   console.log(x)
 
+const getLocationString = 
+  R.path(['results', 0, 'address_components', 1, 'short_name'])
+
 const getLatLngString =
   R.compose(
-    R.join(', '),
+    R.join(','),
     R.props(['latitude', 'longitude']),
     R.prop('coords')
   )
 
 export default class nLocateRN extends Component {
 
-  state = { lagLng: '' }
+  state = { currentLocation: 'fetching...' }
 
-  componentDidMount () {
+  async componentDidMount () {
     navigator.geolocation.watchPosition(
-      pos => {
+      async pos => {
+        const res = await fetch(GEOCODE_URI + getLatLngString(pos)).then(r => r.json())
         this.setState({
-          latLng: getLatLngString(pos)
+          currentLocation: getLocationString(res)
         })
       },
-      console.warn
+      this.showAlert
     )
+  }
+
+  showAlert = x => {
+    console.log(x)
+    alert('Unable to Get Location')
   }
 
   componentWillUnmount () {
@@ -47,10 +58,10 @@ export default class nLocateRN extends Component {
   }
 
   render = _ => {
-    const { latLng } = this.state
+    const { currentLocation } = this.state
     return (
       <Screen>
-        <Banner location={latLng}/>
+        <Banner location={currentLocation}/>
         <OptionsList />
       </Screen>
     )

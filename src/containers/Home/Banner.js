@@ -1,5 +1,6 @@
 import { View, Heading, Icon, TextInput, Row, Caption } from "@shoutem/ui"
 import React from 'react'
+
 export default Banner = ({ location }) => (
   <View style={s.container}>
     <Heading styleName="md-gutter-bottom h-center">
@@ -9,9 +10,8 @@ export default Banner = ({ location }) => (
       styleName="horizontal v-center rounded-corners md-gutter-horizontal" >
       <TextInput
         style={s.search_box}
-        styleName="rounded-corners sm-gutter-horizontal
-        flexible"
-        placeholder="Search around your location" />
+        styleName="flexible"
+        placeholder={`Search around ${location}`} />
       <Icon name="search" />
     </View>
     <Caption styleName='h-center'>{` Current Location: ${location}`}</Caption>
