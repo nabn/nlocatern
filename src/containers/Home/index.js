@@ -53,6 +53,10 @@ export default class nLocateRN extends Component {
     alert('Unable to Get Location')
   }
 
+  handleTextChange = e => {
+    console.log(e.nativeEvent.text)
+  }
+
   componentWillUnmount () {
     navigator.geolocation.clearWatch()
   }
@@ -61,7 +65,9 @@ export default class nLocateRN extends Component {
     const { currentLocation } = this.state
     return (
       <Screen>
-        <Banner location={currentLocation}/>
+        <Banner
+          handleTextChange={this.handleTextChange}
+          location={currentLocation}/>
         <OptionsList />
       </Screen>
     )

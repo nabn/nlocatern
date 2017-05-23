@@ -1,20 +1,22 @@
 import { View, Heading, Icon, TextInput, Row, Caption } from "@shoutem/ui"
 import React from 'react'
+const BLUE =  '#4b77be'
 
-export default Banner = ({ location }) => (
+export default Banner = ({ location, handleTextChange }) => (
   <View style={s.container}>
     <Heading styleName="md-gutter-bottom h-center"
-      style={{color: '#4b77be'}} >
+      style={{color: BLUE}} >
       nLocate 
     </Heading>
     <View style={s.search}
       styleName="horizontal v-center rounded-corners md-gutter-horizontal" >
       <TextInput
         style={s.search_box}
+        onSubmitEditing={handleTextChange}
         styleName="flexible"
         placeholder={`Search around ${location !== 'fetching...' ? location : 'you'}`} />
       <Icon name="search"
-        style={{color: '#4b77be'}} />
+        style={{color: BLUE}} />
     </View>
     <Caption styleName='h-center'>{` Current Location: ${location}`}</Caption>
   </View>
